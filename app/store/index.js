@@ -10,9 +10,10 @@ import reducer from '../reducer';
 // const enhancer = applyMiddleware(thunk, routerMiddleware(history), randomId, api, logger);
 const enhancer = function (){};
 
-const store = createStore(reducer, {}, enhancer);
+const store = createStore(reducer, {counter: 0});
 
 //dev only
 window.store = store;
 
+// export default store;
 export default store;
