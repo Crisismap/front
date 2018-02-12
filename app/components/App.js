@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
+import { FormControl } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import Counter from './Counter';
+import SearchPage from './SearchPage';
 import Button from './Button';
-
-console.log(Counter);
 
 class App extends Component {
     render() {
         return (
             <div>
-                Hello World
-                <Counter />
-                <Button />
+                <SearchPage> </SearchPage>
             </div>
         )
     }

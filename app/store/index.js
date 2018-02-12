@@ -1,9 +1,9 @@
 import {createStore, applyMiddleware} from 'redux';
-import reducer from '../reducer';
+import reducer from '../reducers';
+import thunk from 'redux-thunk';
 // import logger from '../middlewares/logger';
 // import randomId from '../middlewares/randomId';
 // import api from '../middlewares/api';
-// import thunk from 'redux-thunk';
 // import {routerMiddleware} from 'react-router-redux';
 // import history from '../history';
 
