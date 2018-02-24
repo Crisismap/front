@@ -1,8 +1,16 @@
-var webpack = require('webpack'),
-    path = require('path'),
-    CopyWebpackPlugin = require('copy-webpack-plugin');
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
+import path from 'path';
+import paths from './config';
 
-module.exports = {
+const HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
+    template: path.join(paths.src, 'index.html'),
+    name: 'index.html',
+    inject: 'body'
+});
+
+export default {
     entry: [
         path.join(__dirname, '/app/index.js')
     ],
@@ -21,12 +29,13 @@ module.exports = {
         ]
     },
     output: {
-        path: '/build',
+        path: paths.public,
         filename: 'app.js'
     },
     plugins: [
+        HTMLWebpackPluginConfig,
         new CopyWebpackPlugin([
-            { from: path.join(__dirname, '/app/css'), to: path.join(__dirname, '/build/css') }
+            { from: path.join(paths.src, 'css'), to: path.join(paths.public, 'css') }
         ])
     ]
 }
