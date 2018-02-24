@@ -29,6 +29,10 @@ body {
 
 .content {
     margin: auto;
+    max-height: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 5px;
 }
 
 .header {
