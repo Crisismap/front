@@ -8,7 +8,7 @@
   "scripts": {
     "start": "webpack-dev-server --inline --hot --content-base app --history-api-fallback",
     "build": "webpack -w",
-    "deploy": "gh-pages -d app"
+    "deploy": "gh-pages -d build"
   },
   "devDependencies": {
     "babel": "^6.23.0",
