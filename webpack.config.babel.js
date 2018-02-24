@@ -24,7 +24,7 @@ export default {
     module: {
         loaders: [
             { test: /\.jsx?$/, exclude: /node_modules/, loader: "babel-loader" },
-            { test: /\.css$/, loader: 'style-loader!css-loader' },
+            { test: /\.css$/,  include: /node_modules/, loader: "style-loader!css-loader" },
             { test: /\.jpe?g$|\.gif$|\.png$|\.svg$|\.woff$|\.ttf$|\.wav$|\.mp3$/, exclude: /node_modules/, loader: "file-loader?name=[name].[ext]" }
         ]
     },
@@ -35,7 +35,11 @@ export default {
     plugins: [
         HTMLWebpackPluginConfig,
         new CopyWebpackPlugin([
-            { from: path.join(paths.src, 'css'), to: path.join(paths.public, 'css') }
+            { from: path.join(paths.src, "css"), to: path.join(paths.public, "css") },
+            { from: path.join(__dirname + "/node_modules/leaflet/dist", "images"), to: path.join(paths.public + "/css", "images") },
+            { from: __dirname + "/node_modules/leaflet/dist/leaflet.css", to: path.join(paths.public, "css") },
+            { from: __dirname + "/node_modules/leaflet.markercluster/dist/MarkerCluster.css", to: path.join(paths.public, "css") },
+            { from: __dirname + "/node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css", to: path.join(paths.public, "css") }
         ])
     ]
 }

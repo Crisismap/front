@@ -1,7 +1,6 @@
 import 'leaflet';
+import { MarkerClusterGroup } from 'leaflet.markercluster';
 import * as jsonData from './data/data.geo.json';
-
-console.log(jsonData);
 
 var m = document.querySelector('#map');
 m.style.height = document.documentElement.clientHeight + 'px';
@@ -18,8 +17,13 @@ let osm = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png
 
 let data = L.geoJson(jsonData, {
         onEachFeature: onEachFeature
-    }).addTo(lmap);
+    })//.addTo(lmap);
 
-    function onEachFeature(feature, layer) {
-            console.log(feature);
-    }
+function onEachFeature(feature, layer) {
+    console.log(feature);
+}
+
+var markers = L.markerClusterGroup();
+markers.addLayer(data);
+
+lmap.addLayer(markers);
