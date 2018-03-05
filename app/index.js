@@ -1,5 +1,6 @@
 import 'leaflet';
 import 'leaflet-dialog';
+import './utils/leaflet-geodesic';
 import { MarkerClusterGroup } from 'leaflet.markercluster';
 import { getRandomColor } from './utils';
 import * as jsonData from './data/data.geo.json';
@@ -17,6 +18,7 @@ let osm = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png
         worldCopyJump: true,
         zoomControl: false
     }),
+    geodesicLinesArr = [],
     clustersIds = jsonData.features.map(f => f.properties.cluster_id)
                                    .filter((v, i, a) => a.indexOf(v) === i);
 
@@ -46,13 +48,35 @@ let featureStyle = {
     fillOpacity: 0.8
 }
 
+let clearGeodesicLines = () => {
+    geodesicLinesArr.forEach(line => line.removeFrom(lmap));
+    geodesicLinesArr = [];
+}
+
 let createLayersFromClusters = clusters => {
     for (let i = 0; i < clusters.length; i++) {
-        featureStyle.fillColor = getRandomColor();
+
+        let currentColor = featureStyle.fillColor = getRandomColor();
 
         let data = L.geoJson(jsonData, {
             onEachFeature: (feature, layer) => {
                 layer.on('click', (e) => {
+                    clearGeodesicLines();
+                    data.eachLayer(layer => {
+                        let targetLL = e.target.getLatLng();
+                        if (!(layer === e.target)) {
+                            let destLL = layer.getLatLng(),
+                                geoLine = L.geodesic([], {
+	                                weight: 1,
+	                                opacity: 0.5,
+	                                color: currentColor,
+	                                steps: 50
+                                }).addTo(lmap);
+                            geoLine.setLatLngs([[targetLL, destLL]]);
+                            geodesicLinesArr.push(geoLine);
+                        }
+                    });
+
                     L.DomEvent.stopPropagation(e);
                     dialog.open();
                     root.innerHTML =
