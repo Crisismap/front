@@ -39,6 +39,7 @@ export default {
             { from: path.join(__dirname + "/node_modules/leaflet/dist", "images"), to: path.join(paths.public + "/css", "images") },
             { from: __dirname + "/node_modules/leaflet/dist/leaflet.css", to: path.join(paths.public, "css") },
             { from: __dirname + "/node_modules/leaflet.markercluster/dist/MarkerCluster.css", to: path.join(paths.public, "css") },
+            { from: __dirname + "/node_modules/leaflet-dialog/Leaflet.Dialog.css", to: path.join(paths.public, "css") },
             { from: __dirname + "/node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css", to: path.join(paths.public, "css") }
         ])
     ]

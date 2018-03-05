@@ -1,4 +1,5 @@
 import 'leaflet';
+import 'leaflet-dialog';
 import { MarkerClusterGroup } from 'leaflet.markercluster';
 import { getRandomColor } from './utils';
 import * as jsonData from './data/data.geo.json';
@@ -8,13 +9,34 @@ let osm = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
     }),
     point = L.latLng([55.819723, 37.611661]),
-    lmap = new L.Map('map', {layers: [osm], center: point, zoom: 2, maxZoom: 22}),
-    root = document.querySelector('.content'),
+    lmap = new L.Map('map', {
+        layers: [osm],
+        center: point,
+        zoom: 5,
+        maxZoom: 22,
+        worldCopyJump: true,
+        zoomControl: false
+    }),
     clustersIds = jsonData.features.map(f => f.properties.cluster_id)
                                    .filter((v, i, a) => a.indexOf(v) === i);
 
     jsonData.features.filter(f => f.properties.cluster_id === 3)
                      .forEach(f => console.log(f.geometry.coordinates));
+/*MAP CONTROLS*/
+
+let zoomControl = L.control.zoom({position: 'topright'}).addTo(lmap);
+
+let dialogOptions = {
+    size: [300, 600],
+    anchor: [50, 50],
+    initOpen: false
+}
+
+let dialog = L.control.dialog(dialogOptions)
+           .setContent("<div class=\"content\">")
+           .addTo(lmap);
+
+let root = document.querySelector('.content');
 
 let featureStyle = {
     radius: 7,
@@ -32,7 +54,18 @@ let createLayersFromClusters = clusters => {
             onEachFeature: (feature, layer) => {
                 layer.on('click', (e) => {
                     L.DomEvent.stopPropagation(e);
-                    root.innerHTML = e.target.feature.properties.Description;
+                    dialog.open();
+                    root.innerHTML =
+                        `<div>
+                            <div>
+                                <h3>
+                                    cluster_id: ${e.target.feature.properties.cluster_id}
+                                </h3>
+                            </div>
+                            <div>
+                                ${e.target.feature.properties.Description}
+                            </div>
+                        </div>`
                 });
             },
             pointToLayer: (feature, latlng) => L.circleMarker(latlng, featureStyle),
@@ -73,7 +106,10 @@ let createLayersFromClusters = clusters => {
 
 createLayersFromClusters(clustersIds);
 
-lmap.on('click', () => root.innerHTML = '');
+lmap.on('click', () => {
+    dialog.close();
+    root.innerHTML = ''
+});
 
 // DEBUG ONLY
 window.lmap = lmap;
