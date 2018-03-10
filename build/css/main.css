@@ -18,19 +18,21 @@ body {
     width: 100%;
     margin: 0;
 }
+
 .left-panel {
     width: 200px;
     height: 100%;
     float: left;
     display: none;
 }
+
 #map {
     height: 100%;
 }
 
 .content {
     margin: auto;
-    max-height: 400px;
+    max-height: 550px;
     overflow: hidden;
     text-overflow: ellipsis;
     padding: 5px;
@@ -42,4 +44,12 @@ body {
 
 .leaflet-control-dialog {
     background-color: rgba(255,255,255, 0.7);
+}
+
+pre {
+    height: auto;
+    max-height: 480px;
+    overflow: auto;
+    background-color: #eeeeee;
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }

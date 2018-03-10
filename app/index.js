@@ -29,8 +29,8 @@ let osm = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png
 let zoomControl = L.control.zoom({position: 'topright'}).addTo(lmap);
 
 let dialogOptions = {
-    size: [300, 600],
-    anchor: [50, 50],
+    size: [620, 620],
+    anchor: [20, 20],
     initOpen: false
 }
 
@@ -79,6 +79,9 @@ let createLayersFromClusters = clusters => {
 
                     L.DomEvent.stopPropagation(e);
                     dialog.open();
+
+                    let formattedProps = JSON.stringify(e.target.feature.properties, null, 6);
+                    console.log(formattedProps);
                     root.innerHTML =
                         `<div>
                             <div>
@@ -86,9 +89,9 @@ let createLayersFromClusters = clusters => {
                                     cluster_id: ${e.target.feature.properties.cluster_id}
                                 </h3>
                             </div>
-                            <div>
-                                ${e.target.feature.properties.Description}
-                            </div>
+                            <pre>
+                                ${formattedProps}
+                            </pre>
                         </div>`
                 });
             },
