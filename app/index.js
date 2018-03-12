@@ -3,7 +3,7 @@ import 'leaflet-dialog';
 import './utils/leaflet-geodesic';
 import { MarkerClusterGroup } from 'leaflet.markercluster';
 import { getRandomColor } from './utils';
-import * as jsonData from './data/data.geo.json';
+
 
 let osm = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
         maxZoom: 18,
@@ -19,26 +19,18 @@ let osm = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png
         zoomControl: false
     }),
     geodesicLinesArr = [],
-    clustersIds = jsonData.features.map(f => f.properties.cluster_id)
-                                   .filter((v, i, a) => a.indexOf(v) === i);
+    dialogOptions = {
+        size: [620, 620],
+        anchor: [20, 20],
+        initOpen: false
+    },
+    dialog = L.control.dialog(dialogOptions)
+        .setContent("<div class=\"content\">")
+        .addTo(lmap),
+    root = document.querySelector('.content');
 
-    jsonData.features.filter(f => f.properties.cluster_id === 3)
-                     .forEach(f => console.log(f.geometry.coordinates));
 /*MAP CONTROLS*/
-
-let zoomControl = L.control.zoom({position: 'topright'}).addTo(lmap);
-
-let dialogOptions = {
-    size: [620, 620],
-    anchor: [20, 20],
-    initOpen: false
-}
-
-let dialog = L.control.dialog(dialogOptions)
-           .setContent("<div class=\"content\">")
-           .addTo(lmap);
-
-let root = document.querySelector('.content');
+let zoomControl = L.control.zoom({position: 'bottomright'}).addTo(lmap);
 
 let featureStyle = {
     radius: 7,
@@ -53,12 +45,24 @@ let clearGeodesicLines = () => {
     geodesicLinesArr = [];
 }
 
-let createLayersFromClusters = clusters => {
+let clearLayers = map => {
+    clearGeodesicLines();
+    dialog.close();
+    root.innerHTML = '';
+
+    map.eachLayer(layer => {
+        if ((layer instanceof L.MarkerClusterGroup)) {
+            layer.clearLayers();
+            }
+    });
+}
+
+let createLayersFromClusters = (clusters, sourceData, map) => {
     for (let i = 0; i < clusters.length; i++) {
 
         let currentColor = featureStyle.fillColor = getRandomColor();
 
-        let data = L.geoJson(jsonData, {
+        let data = L.geoJson(sourceData, {
             onEachFeature: (feature, layer) => {
                 layer.on('click', (e) => {
                     clearGeodesicLines();
@@ -81,7 +85,6 @@ let createLayersFromClusters = clusters => {
                     dialog.open();
 
                     let formattedProps = JSON.stringify(e.target.feature.properties, null, 6);
-                    console.log(formattedProps);
                     root.innerHTML =
                         `<div>
                             <div>
@@ -131,11 +134,28 @@ let createLayersFromClusters = clusters => {
     }
 }
 
-createLayersFromClusters(clustersIds);
+let initData = (sourceName, map) => {
+    let jsonData  = require(`./data/${sourceName}.geo.json`),
+        clustersIds = jsonData.features
+            .map(f => f.properties.cluster_id)
+            .filter((v, i, a) => a.indexOf(v) === i);
+
+    clearLayers(map);
+    createLayersFromClusters(clustersIds, jsonData, map);
+}
+
+let dataLinks = Array.from(document.querySelectorAll('.data-selector'));
+
+dataLinks.forEach(elem => {
+    let sourceName = elem.innerText;
+    elem.onclick = (e) => {
+        initData(sourceName, lmap);
+    }
+})
 
 lmap.on('click', () => {
     dialog.close();
-    root.innerHTML = ''
+    root.innerHTML = '';
 });
 
 // DEBUG ONLY

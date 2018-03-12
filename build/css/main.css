@@ -53,3 +53,16 @@ pre {
     background-color: #eeeeee;
     word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
+
+/* top-panel */
+.data-list {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+}
+
+.data-selector {
+    cursor: pointer;
+    display: block;
+}
